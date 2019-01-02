@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
-	"net/url"
 	"os"
+	"strings"
 
+	"github.com/belovai/goopenweathermapapi"
 	"github.com/pborman/getopt/v2"
 )
 
@@ -27,6 +27,7 @@ var City *string
 var Units *string
 var AppID *string
 var Format *string
+var Lang *string
 
 func main() {
 	SetOptions()
@@ -55,11 +56,13 @@ func SetOptions() {
 	if defaultUnits == "" {
 		defaultUnits = "metric"
 	}
+
 	Help = getopt.BoolLong("help", 'h', "Shows this help")
 	City = getopt.StringLong("city", 'c', os.Getenv("GOWEATHER_CITY"), "City name and country code separated by comma. Use ISO 3166 country codes. Example: London,gb Default value will be your GOWEATHER_CITY environment varible.")
 	Units = getopt.EnumLong("units", 'u', []string{"imperial", "metric"}, defaultUnits, "Temperature is available in Fahrenheit and Celsius units. Possible values: imperial, metric. Default value will be metric if your GOWEATHER_UNITS not set.")
 	AppID = getopt.StringLong("appid", 'a', os.Getenv("GOWEATHER_APPID"), "Your APPID from https://openweathermap.org. Default value will be your GOWEATHER_APPID environment variable.")
 	Format = getopt.EnumLong("format", 'f', []string{"pretty", "json"}, "pretty", "Output format. Possible values: pretty, json. Default value is pretty")
+	Lang = getopt.StringLong("lang", 'l', os.Getenv("GOWEATHER_LANG"), "API language")
 	getopt.Parse()
 }
 
@@ -71,38 +74,16 @@ func ShowHelp(message string) {
 	os.Exit(0)
 }
 
-func BuildQuery(params map[string]string) string {
-	p := url.Values{}
-	for key, value := range params {
-		p.Add(key, value)
-	}
-
-	return p.Encode()
-}
-
 func GetCurrentWerather(params map[string]string) {
-	url := fmt.Sprintf("%s?%s", apiURL, BuildQuery(params))
 
-	req, err := http.NewRequest("GET", url, nil)
+	client := goopenweathermapapi.NewClient(*AppID)
+
+	weatherJson, err := client.GetWeatherByCityName(*City, *Units, *Lang)
+
 	if err != nil {
-		log.Fatal("NewRequest: ", err)
-		return
-	}
-
-	client := &http.Client{}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Fatal("Do: ", err)
-		return
-	}
-
-	defer resp.Body.Close()
-
-	if resp.StatusCode >= 300 {
-		log.Println("Error on request: ", resp.Status)
+		log.Println("Error on request: ", err)
 		var errorResponse ErrorResponse
-		if err := json.NewDecoder(resp.Body).Decode(&errorResponse); err != nil {
+		if err := json.NewDecoder(strings.NewReader(weatherJson)).Decode(&errorResponse); err != nil {
 			log.Fatal("Decode:", err)
 		}
 		log.Println("Code:", errorResponse.Cod)
@@ -112,7 +93,7 @@ func GetCurrentWerather(params map[string]string) {
 
 	var currentWeather WeatherResponse
 
-	if err := json.NewDecoder(resp.Body).Decode(&currentWeather); err != nil {
+	if err := json.NewDecoder(strings.NewReader(weatherJson)).Decode(&currentWeather); err != nil {
 		log.Println(err)
 	}
 
