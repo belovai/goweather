@@ -3,6 +3,14 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:0d7f7cd49f9938cb3e4de84ce1950f48b70675bb9e54632e212ac45752abef7d"
+  name = "github.com/belovai/goopenweathermapapi"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "e3bc1d8c9cf4454320a5ac0391616d4beffded20"
+
+[[projects]]
+  branch = "master"
   digest = "1:03f6f430c25614089460bd1531c21edc10ba3971fa3362995a18dabbd16da705"
   name = "github.com/pborman/getopt"
   packages = ["v2"]
@@ -12,6 +20,9 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  input-imports = ["github.com/pborman/getopt/v2"]
+  input-imports = [
+    "github.com/belovai/goopenweathermapapi",
+    "github.com/pborman/getopt/v2",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
