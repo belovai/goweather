@@ -45,17 +45,17 @@ func TestCalculateDirections(t *testing.T) {
 
 }
 
-func TestBuildParams(t *testing.T) {
+func TestBuildQuery(t *testing.T) {
 	var params = map[string]string{
 		"a": "avalue",
 		"b": "bvalue",
 	}
-	if BuildParams(params) != "a=avalue&b=bvalue" {
+	if BuildQuery(params) != "a=avalue&b=bvalue" {
 		t.Error("Builded query not valid")
 	}
 }
 
-func TestTableBuildParams(t *testing.T) {
+func TestTableBuildQuery(t *testing.T) {
 	var tests = []struct {
 		input    map[string]string
 		expected string
@@ -84,7 +84,7 @@ func TestTableBuildParams(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if output := BuildParams(test.input); output != test.expected {
+		if output := BuildQuery(test.input); output != test.expected {
 			t.Error("Test Failed: {} inputted, {} expected, recieved: {}", test.input, test.expected, output)
 		}
 	}
