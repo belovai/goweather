@@ -3,11 +3,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:0d7f7cd49f9938cb3e4de84ce1950f48b70675bb9e54632e212ac45752abef7d"
+  digest = "1:51becaeb722ba1bfaf5a618d864d3e96b690a38f58db17f5ecbb4959613efc39"
   name = "github.com/belovai/goopenweathermapapi"
   packages = ["."]
   pruneopts = "UT"
-  revision = "e3bc1d8c9cf4454320a5ac0391616d4beffded20"
+  revision = "35a2c2c8f11bb405cd8f74a911ecb61b4c5ce464"
 
 [[projects]]
   branch = "master"
